@@ -1,31 +1,37 @@
-import model from "./model";
+import model from "./model.js";
 
 
-export const saveDb = async (req,res)=>{
+export const saveDb = async (req, res) => {
     try {
-           console.log(req.body);
-        const checkExist =await User.findOne({email:req.body.email})
-        console.log(req.body.phone);
-        if(checkExist){
-            console.log("1");
-            res.json({status:false,error:'Email already exists'})
-        }else{
-            console.log("2");
-            const data = new User({
-                name:req.body.name,
-                email:req.body.email,
-                password:req.body.password,
-                phone:req.body.phone,
-                is_Admin:false
-               })
-        
-               const userData = await data.save()
-               const token = jwt.sign({userId:userData._id},process.env.JWT_SECRET,{expiresIn:'30d'})
-               console.log(token+"here");
-               res.json({userData,token,status:true})
-        }
+        const { weatherData } = req.body;
+        const weather = new model({
+            temp: weatherData.main.temp,
+            feels_like: weatherData.main.feels_like,
+            main: weatherData.weather[0].main,
+            description: weatherData.weather[0].description,
+            city: weatherData.name,
+            country: weatherData.sys.country,
+            date: new Date(weatherData.dt * 1000),
+            sunset: new Date(weatherData.sys.sunset * 1000),
+            forecast: weatherData.forecast || []
+        });
 
+        await weather.save();
+        res.status(201).send({ message: 'Weather data saved successfully' });
     } catch (error) {
-        console.log(error.message);
+        console.error(error);
+        res.status(500).send({ message: 'Failed to save weather data' });
+    }
+
+}
+
+
+export const sendData = async(req,res) =>{
+    try {
+        const data = await model.find({})
+        res.status(201).send({ message: 'Weather data saved successfully' ,data});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Failed to save weather data' });
     }
 }

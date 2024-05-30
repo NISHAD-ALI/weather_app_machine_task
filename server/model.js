@@ -1,15 +1,29 @@
-import mongoose from 'mongoose'
+// models/Weather.js
+
+import mongoose from 'mongoose';
 
 const weatherSchema = new mongoose.Schema({
-    temperature: {
+    temp: {
         type: Number,
         required: true
     },
-    weatherDescription: {
+    feels_like: {
+        type: Number,
+        required: true
+    },
+    main: {
         type: String,
         required: true
     },
-    location: {
+    description: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    country: {
         type: String,
         required: true
     },
@@ -17,15 +31,15 @@ const weatherSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    feelsLike: {
-        type: Number,
+    sunset: {
+        type: Date,
         required: true
     },
-    sunsetTime: {
-        type: String,
-        required: true
+    forecast: {
+        type: Array,
+        required: false
     }
 });
 
 const model = mongoose.model('Weather', weatherSchema);
-export default model
+export default model;
